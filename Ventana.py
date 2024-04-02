@@ -93,7 +93,7 @@ class Ventana:
         print(Data)
         entry = Analizador_lexico()
         entry.analizador(Data)
-        f = open ("Analizador.txt","w")
+        f = open ("Analizador.lfp","w")
         f.write(Data)
         f.close()
 
@@ -118,7 +118,7 @@ class Ventana:
             webbrowser.open("Manual Tecnico.pdf")
 
     def guardar_archivo(self):
-        archivo = filedialog.asksaveasfilename(defaultextension = ".txt")
+        archivo = filedialog.asksaveasfilename(defaultextension = ".lfp")
         if archivo:
             contenido = self.barra_scroll.get(1.0, tk.END)
             with open(archivo, "w") as file:
