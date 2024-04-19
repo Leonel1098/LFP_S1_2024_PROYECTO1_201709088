@@ -1,0 +1,50 @@
+Inicio:{
+Encabezado:{
+TituloPagina:"Mi pagina web";
+},
+Cuerpo:[
+Titulo:{
+texto:"Bienvenido a mi pagina";
+posicion:"centro";
+tamaño:"t1";
+color:"azul";
+},
+Fondo:{
+color:"blanco";
+},
+Parrafo:{
+texto:"Gracias por visitar mi sitio web.";
+posicion:"izquierda";
+},
+Texto:{
+fuente="Helvetica";
+color="blanco";
+tamaño="14";
+texto="Lenguajes Formales y de Programación B+, Si sale!!";
+},
+Codigo:{
+texto:"Aquí puedes ver un fragmento de código HTML: <p>Hello, world!</p>";
+posicion:"centro";
+},
+Negrita:{
+texto:"Univerisad San Carlos de Guatemala";
+},
+Subrayado:{
+texto:"Facultad de Ingenieria - USAC";
+},
+Tachado:{
+texto:"Primero proyecto de analisis lexico";
+},
+Cursiva:{
+texto:"FIUSAC";
+},
+Salto:{
+cantidad:"10";
+},
+Tabla:{
+filas:"4";
+columnas:"3";
+}
+
+]
+}

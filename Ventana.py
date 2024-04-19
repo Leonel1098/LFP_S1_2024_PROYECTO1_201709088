@@ -11,7 +11,7 @@ class Ventana:
     def __init__(self, raiz) -> None:
         self.raiz = raiz
         self.raiz.title ("Traductor de Código")
-        self.raiz.geometry(("1000x800+350+10"))
+        self.raiz.geometry(("1420x800+60+10"))
         self.raiz.resizable(0,0)
 
         self.ventana = tk.Frame(raiz)
@@ -20,7 +20,7 @@ class Ventana:
 
         self.contenedor_texto1 = tk.Text(self.ventana)
         self.contenedor_texto1.pack(side="left")
-        self.contenedor_texto1.place(x = "20", y = "40", width=480, height=740)
+        self.contenedor_texto1.place(x = "20", y = "40", width=665, height=740)
         
 
         self.barra_numeros = tk.Text(self.contenedor_texto1, width=3, padx = 4, takefocus = 0, border = 3, background = 'lightblue', state ='disabled')
@@ -36,7 +36,7 @@ class Ventana:
 
         self.contenedor_texto2 = tk.Text(self.ventana)
         self.contenedor_texto2.pack(side="right")
-        self.contenedor_texto2.place(x= "510", y = "40", width=480, height=740)
+        self.contenedor_texto2.place(x= "710", y = "40", width=690, height=740)
 
         self.barra_numeros2 = tk.Text(self.contenedor_texto2, width=3, padx= 4, takefocus= 0, border= 3, background= "lightblue", state= "disabled"  )
         self.barra_numeros2.pack(side= tk.LEFT, fill= tk.Y )
@@ -56,7 +56,7 @@ class Ventana:
 
 
 
-        self.boton_traducir = tk.Button(raiz, text="Traducir Archivo", command= self.mostrar_archivo, foreground = "white")
+        self.boton_traducir = tk.Button(raiz, text="Traducir Archivo", command= self.Html, foreground = "white")
         self.boton_traducir.pack()
         self.boton_traducir.config(bg = "black")
         self.boton_traducir.place(x = "510", y = "10", width= 120, height=25)
@@ -76,7 +76,7 @@ class Ventana:
     def abrir_archivo(self):
         archivo = filedialog.askopenfilename()
         if archivo:
-            with open(archivo, 'r') as file:
+            with open(archivo, 'r', encoding="utf8") as file:
                 contenido = file.read()
                 self.barra_scroll.delete(1.0, tk.END)
                 global Data
@@ -93,8 +93,11 @@ class Ventana:
         print(Data)
         entry = Analizador_lexico()
         entry.analizador(Data)
+        entry.imprimirInfo()
+       
         f = open ("Analizador.lfp","w")
         f.write(Data)
+      
         f.close()
 
     def Reportando(self):
@@ -117,6 +120,20 @@ class Ventana:
         elif reportes == "Manual Técnico":
             webbrowser.open("Manual Tecnico.pdf")
 
+    def Html(self):
+        global Data 
+        #print("HTML FUNCION ")
+
+        Data = self.barra_scroll.get("1.0","end-1c")
+        lexema = Analizador_lexico()
+        lexema.analizador(Data)
+        texto_html = lexema.html_Creado()
+    
+        self.mostrar_archivo(texto_html)
+        
+       
+
+
     def guardar_archivo(self):
         archivo = filedialog.asksaveasfilename(defaultextension = ".lfp")
         if archivo:
@@ -135,18 +152,18 @@ class Ventana:
             self.barra_numeros.config(state = tk.DISABLED)
             self.linea_actual = contador_linea
 
-    def mostrar_archivo(self):
-        texto = self.barra_scroll.get(1.0, tk.END)
+    def mostrar_archivo(self, result ):
+       
         self.barra_scroll2.config(state= "normal")
         self.barra_scroll2.delete(1.0, tk.END)
-        self.barra_scroll2.insert(tk.END, texto)
-        self.barra_scroll2.tag_configure("green", foreground="green")
+        self.barra_scroll2.insert(tk.END, result)
+        self.barra_scroll2.tag_configure("green", foreground="blue")
         self.barra_scroll2.tag_add("green", "1.0", "end")
         self.barra_scroll2.config(state='disabled')
 
 
 
-        
+    
 
 if __name__ == "__main__":
     root = tk.Tk()

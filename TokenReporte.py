@@ -2,7 +2,7 @@ import webbrowser
 
 def reportoken(listaToken = []):
   info = " "
-  htmlFile = open("Token.html", "w")
+  htmlFile = open("Token.html", "w", encoding="utf-8")
 
   htmlFile.write("""<!DOCTYPE HTML PUBLIC"
 
@@ -10,7 +10,9 @@ def reportoken(listaToken = []):
 
     <head>
         <title>REPORTE </title>
-     <meta charset="utf-8">
+     <meta http-equiv=”Content-Type” content=”text/html"; unicode=UTF-8″ />
+     <meta http-equiv=”Content-Type” content=”text/html; charset=ISO-8859-1″ />
+                 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -2,6 +2,7 @@ from Token import Token
 from Errores import Error
 from ErrorReporte import reporterror
 from TokenReporte import reportoken
+from Crear_HTML import traduccion_Html
 import re
 
 
@@ -14,17 +15,20 @@ class Analizador_lexico:
         self.listError = []
         self.listReservadas = []
         self.listValores = []
-    
+        self.elementos = {}
     def analizador(self,entry):
         #Reiniciar listas para que en cada análisis se reinicie y poder analizar sin reiniciar el programa
         self.listTokens = []
         self.listError = []
         self.listReservadas = []
-
+        valor = ""
+        clave = ""
         buffer = ""
+        Titulo = ""
         centinela = "$"
         entry += centinela
-
+        self.elementos = {} 
+        self.argsDeElementos ={}
         linea = 1
         columna = 1
 
@@ -57,12 +61,20 @@ class Analizador_lexico:
                     self.listTokens.append(token)
                     buffer = ""
                     estado = 0
+                    
 
                 elif caracter == "}":
                     columna +=1
                     buffer += caracter
                     token = Token("LLAVE QUE CIERRA", buffer, linea, columna)
                     self.listTokens.append(token)
+                    self.elementos[Titulo] = self.argsDeElementos
+                    self.argsDeElementos = {}
+                    print("=================Elemento ==================")
+                    print(self.elementos)
+                    print("================= ==================")
+                  
+                    Titulo =""
                     buffer = ""
                     estado = 0
                 
@@ -73,12 +85,65 @@ class Analizador_lexico:
                     self.listTokens.append(token)
                     buffer = ""
                     estado = 0
+                
+                elif caracter == ">":
+                    columna +=1
+                    buffer += caracter
+                    token = Token("MAYOR QUE", buffer, linea, columna)
+                    self.listTokens.append(token)
+                    buffer = ""
+                    estado = 0
+
+                elif caracter == "<":
+                    columna +=1
+                    buffer += caracter
+                    token = Token("MENOR QUE", buffer, linea, columna)
+                    self.listTokens.append(token)
+                    buffer = ""
+                    estado = 0
+
+                elif caracter == "/":
+                    columna +=1
+                    buffer += caracter
+                    token = Token("BARRA", buffer, linea, columna)
+                    self.listTokens.append(token)
+                    buffer = ""
+                    estado = 0
+
+                elif caracter == "-":
+                    columna +=1
+                    buffer += caracter
+                    token = Token("GUION", buffer, linea, columna)
+                    self.listTokens.append(token)
+                    buffer = ""
+                    estado = 0
+
+                elif caracter == "!":
+                    columna +=1
+                    buffer += caracter
+                    token = Token("ADMIRACION CIERRA", buffer, linea, columna)
+                    self.listTokens.append(token)
+                    buffer = ""
+                    estado = 0
+
+                elif caracter == "+":
+                    columna +=1
+                    buffer += caracter
+                    token = Token("SUMA", buffer, linea, columna)
+                    self.listTokens.append(token)
+                    buffer = ""
+                    estado = 0
 
                 elif caracter == ";":
                     columna +=1
                     buffer += caracter
                     token = Token("PUNTO Y COMA", buffer, linea, columna)
                     self.listTokens.append(token)
+                    self.argsDeElementos[clave] = valor
+                    
+                    valor = ""
+                    clave = ""
+
                     buffer = ""
                     estado = 0
 
@@ -87,13 +152,15 @@ class Analizador_lexico:
                     buffer += caracter
                     token = Token("COMA", buffer, linea, columna)
                     self.listTokens.append(token)
+                    
+
                     buffer = ""
                     estado = 0
                 
                 elif caracter == "[":
                     columna +=1
                     buffer += caracter
-                    token = Token("CORCCHETE ABRE", buffer, linea, columna)
+                    token = Token("CORCHETE ABRE", buffer, linea, columna)
                     self.listTokens.append(token)
                     buffer = ""
                     estado = 0
@@ -101,7 +168,7 @@ class Analizador_lexico:
                 elif caracter == "]":
                     columna +=1
                     buffer += caracter
-                    token = Token("CORCCHETE CIERRA", buffer, linea, columna)
+                    token = Token("CORCHETE CIERRA", buffer, linea, columna)
                     self.listTokens.append(token)
                     buffer = ""
                     estado = 0
@@ -111,6 +178,8 @@ class Analizador_lexico:
                     buffer += caracter
                     token = Token("IGUAL", buffer, linea, columna)
                     self.listTokens.append(token)
+                    
+
                     buffer = ""
                     estado = 0
                 
@@ -129,7 +198,7 @@ class Analizador_lexico:
 
                 elif caracter == " ":
                     columna +=1
-                
+                    buffer += caracter
                 elif caracter == "\t":
                     columna += 1
                 
@@ -144,11 +213,13 @@ class Analizador_lexico:
             
             #Palabras Reservadas
             elif estado == 1:
-                if re.search(r"[a-zA-Z]",caracter) or caracter == "":
+                if re.search(r"[a-zA-ZÁ\u00f1\u00d1\u00E0-\u00FC]",caracter) or caracter == "":
                     if caracter == " ":
                         columna += 1
                         estado = 1
-                    
+                    elif caracter == "\ñ":
+                        columna += 1
+                        estado = 1
                     elif caracter == "\t":
                         columna +=1
 
@@ -169,100 +240,128 @@ class Analizador_lexico:
                     elif buffer == "Encabezado":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
                     
                     elif buffer == "TituloPagina":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
                     
                     elif buffer == "Cuerpo":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
                     
                     elif buffer =="Titulo":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
-                    
+                        Titulo = buffer
+
                     elif buffer == "texto":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
                     
                     elif buffer == "posicion":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
                     
                     elif buffer == "tamaño":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
                     
                     elif buffer == "color":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
 
                     elif buffer == "Fondo":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
 
                     elif buffer == "Parrafo":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
                     
                     elif buffer == "Texto":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
                     
                     elif buffer == "fuente":
                         Tokentipo = "PAlABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
 
                     elif buffer == "Codigo":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
 
                     elif buffer == "Negrita":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
 
                     elif buffer == "Subrayado":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
 
                     elif buffer == "Tachado":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
 
                     elif buffer == "Cursiva":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
 
                     elif buffer == "Salto":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
                     
                     elif buffer == "cantidad":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
 
                     elif buffer == "Tabla":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
                     
                     elif buffer == "filas":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
+                        
+
 
                     elif buffer == "columnas":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        clave = buffer
 
                     elif buffer == "elemento":
                         Tokentipo = "PALABRA RESERVADA"
                         self.listReservadas.append(buffer)
+                        Titulo = buffer
+                         
                     
                     else:
                         Tokentipo = "IDENTIFICADOR"
-                    
+                        valor +=  buffer
+
                     token = Token(Tokentipo,buffer,linea,columna)
                     self.listTokens.append(token)
+                    
                     buffer = ""
                     index -= 1
                     estado = 0
@@ -308,6 +407,8 @@ class Analizador_lexico:
                 columna += 1
                 index -= 1
             index += 1
+       
+        
         return entry
     
     def ErrorToken(self):
@@ -316,7 +417,11 @@ class Analizador_lexico:
     def ErrorReporte(self):
         reporterror(self.listError)
 
-    
+    def html_Creado(self):
+        return traduccion_Html(self.elementos)
+
+
+        
     def imprimirInfo(self):
         print("\n\n\n")
         print("======= Lista de Tokens =======")
